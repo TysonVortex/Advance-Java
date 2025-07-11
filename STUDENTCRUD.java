@@ -1,198 +1,186 @@
+package src.project1;
+
 import java.sql.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class StudentCRUD {
-    private static final String URL = "jdbc:mysql://localhost:3306/school_db";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "password";
-    
-    private static Connection conn;
-    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    
     public static void main(String[] args) {
         try {
-            // Connect to database
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Connected to database!");
-            
-            // Create table
-            createTable();
-            
-            // Main menu
-            while (true) {
-                System.out.println("\n1. Insert");
-                System.out.println("2. Update (ask id for update)");
-                System.out.println("3. Delete (ask id for delete)");
-                System.out.println("4. Display all records");
-                System.out.println("5. Exit");
-                System.out.print("Enter your choice (1-5): ");
-                
-                int choice = Integer.parseInt(br.readLine());
-                
-                switch (choice) {
-                    case 1:
-                        insertStudent();
-                        break;
-                    case 2:
-                        updateStudent();
-                        break;
-                    case 3:
-                        deleteStudent();
-                        break;
-                    case 4:
-                        displayAllStudents();
-                        break;
-                    case 5:
-                        System.out.println("Exiting...");
-                        conn.close();
-                        return;
-                    default:
-                        System.out.println("Invalid choice!");
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    
-    private static void createTable() {
-        try {
-            String sql = "CREATE TABLE IF NOT EXISTS students (" +
-                         "id INT AUTO_INCREMENT PRIMARY KEY," +
-                         "name VARCHAR(100)," +
-                         "city VARCHAR(50)," +
-                         "state VARCHAR(50)," +
-                         "pincode VARCHAR(10))";
-            
-            Statement stmt = conn.createStatement();
-            stmt.execute(sql);
-            stmt.close();
-        } catch (SQLException e) {
-            System.out.println("Error creating table: " + e.getMessage());
-        }
-    }
-    
-    private static void insertStudent() {
-        try {
+            // Load MySQL JDBC driver
+            Class.forName("com.mysql.jdbc.Driver"); 
+
+            // Establish connection 
+            Connection con = DriverManager.getConnection(
+                "jdbc:mysql://localhost/college", "root", ""
+            );
+
+            // Reader for taking input from user
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            String choice;
+
+            // Loop until the user chooses to exit
             do {
-                System.out.print("Enter name: ");
-                String name = br.readLine();
-                
-                System.out.print("Enter city: ");
-                String city = br.readLine();
-                
-                System.out.print("Enter state: ");
-                String state = br.readLine();
-                
-                System.out.print("Enter pincode: ");
-                String pincode = br.readLine();
-                
-                String sql = "INSERT INTO students (name, city, state, pincode) VALUES (?, ?, ?, ?)";
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-                pstmt.setString(1, name);
-                pstmt.setString(2, city);
-                pstmt.setString(3, state);
-                pstmt.setString(4, pincode);
-                
-                pstmt.executeUpdate();
-                System.out.println("Student inserted successfully!");
-                pstmt.close();
-                
-                System.out.print("Do you want to insert another record? (y/n): ");
-                String choice = br.readLine();
-                
-                if (!choice.equalsIgnoreCase("y")) {
-                    System.out.println("Exiting program...");
-                    conn.close();
-                    System.exit(0);
+                // Display menu
+                System.out.println("\n---- Student CRUD Menu ----");
+                System.out.println("1. Insert");
+                System.out.println("2. Update");
+                System.out.println("3. Delete");
+                System.out.println("4. Display All");
+                System.out.println("5. Exit");
+                System.out.print("Enter your choice: ");
+                choice = br.readLine().trim();
+
+                switch (choice) {
+                case "1": // Insert
+                    String insertMore = null;
+                    do {
+                        int id;
+                        try {
+                            System.out.print("Enter id: ");
+                            id = Integer.parseInt(br.readLine());
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid ID. Please enter a number.");
+                            continue;
+                        }
+
+                        // Check if ID exists
+                        PreparedStatement check = con.prepareStatement("SELECT id FROM student WHERE id = ?");
+                        check.setInt(1, id);
+                        ResultSet existing = check.executeQuery();
+                        if (existing.next()) {
+                            System.out.println("Student with this ID already exists.");
+                            continue;
+                        }
+
+                        // Collect details
+                        System.out.print("Enter name: ");
+                        String name = br.readLine();
+                        System.out.print("Enter city: ");
+                        String city = br.readLine();
+                        System.out.print("Enter state: ");
+                        String state = br.readLine();
+                        System.out.print("Enter pincode: ");
+                        String pin = br.readLine();
+
+                        // Insert into database
+                        PreparedStatement ps1 = con.prepareStatement(
+                            "INSERT INTO student (id, name, city, state, pincode) VALUES (?, ?, ?, ?, ?)"
+                        );
+                        ps1.setInt(1, id);
+                        ps1.setString(2, name);
+                        ps1.setString(3, city);
+                        ps1.setString(4, state);
+                        ps1.setString(5, pin);
+                        int ins = ps1.executeUpdate();
+                        System.out.println(ins + " record inserted.");
+                        ps1.close();
+
+                        // Ask for another insert
+                        System.out.print("Do you want to insert another record? (y/n): ");
+                        insertMore = br.readLine().trim().toLowerCase();
+                        if (insertMore.equals("n")) {
+                            System.out.println("Exiting program..., Goodbye!");
+                            br.close();
+                            con.close();
+                            System.exit(0); // <- Exit program here
+                        }
+                    } while (insertMore.equals("y"));
+                    break;
+
+
+                    case "2": // Update
+                        int idToUpdate;
+                        try {
+                            System.out.print("Enter ID to update: ");
+                            idToUpdate = Integer.parseInt(br.readLine());
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid ID.");
+                            break;
+                        }
+
+                        // New values
+                        System.out.print("Enter new name: ");
+                        String newName = br.readLine();
+                        System.out.print("Enter new city: ");
+                        String newCity = br.readLine();
+                        System.out.print("Enter new state: ");
+                        String newState = br.readLine();
+                        System.out.print("Enter new pincode: ");
+                        String newPin = br.readLine();
+
+                        // Update 
+                        PreparedStatement ps2 = con.prepareStatement(
+                            "UPDATE student SET name=?, city=?, state=?, pincode=? WHERE id=?"
+                        );
+                        ps2.setString(1, newName);
+                        ps2.setString(2, newCity);
+                        ps2.setString(3, newState);
+                        ps2.setString(4, newPin);
+                        ps2.setInt(5, idToUpdate);
+                        int upd = ps2.executeUpdate();
+                        System.out.println(upd + " record updated.");
+                        ps2.close();
+                        break;
+
+                    case "3": // Delete
+                        int idToDelete;
+                        try {
+                            System.out.print("Enter ID to delete: ");
+                            idToDelete = Integer.parseInt(br.readLine());
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid ID.");
+                            break;
+                        }
+
+                        System.out.print("Are you sure you want to delete this record? (yes/no): ");
+                        String confirm = br.readLine().trim().toLowerCase();
+                        if (!confirm.equals("yes")) {
+                            System.out.println("Delete cancelled.");
+                            break;
+                        }
+
+                        // Perform delete
+                        PreparedStatement ps3 = con.prepareStatement("DELETE FROM student WHERE id=?");
+                        ps3.setInt(1, idToDelete);
+                        int del = ps3.executeUpdate();
+                        System.out.println(del + " record deleted.");
+                        ps3.close();
+                        break;
+
+                    case "4": // Display all students
+                        Statement stmt = con.createStatement();
+                        ResultSet rs = stmt.executeQuery("SELECT * FROM student");
+
+                        System.out.printf("%-5s %-15s %-15s %-15s %-10s\n", "ID", "Name", "City", "State", "Pincode");
+                        System.out.println("--------------------------------------------------------------");
+                        while (rs.next()) {
+                            System.out.printf("%-5d %-15s %-15s %-15s %-10s\n",
+                                rs.getInt("id"),
+                                rs.getString("name"),
+                                rs.getString("city"),
+                                rs.getString("state"),
+                                rs.getString("pincode")
+                            );
+                        }
+                        rs.close();
+                        stmt.close();
+                        break;
+
+                    case "5": // Exit
+                        System.out.println("Exiting program. Goodbye!");
+                        break;
+
+                    default:
+                        System.out.println("Invalid choice. Please enter a number from 1 to 5.");
                 }
-            } while (true);
+            } while (!choice.equals("5"));
+
+            // Cleanup
+            br.close();
+            con.close();
         } catch (Exception e) {
-            System.out.println("Error in insert operation: " + e.getMessage());
-        }
-    }
-    
-    private static void updateStudent() {
-        try {
-            System.out.print("Enter student ID to update: ");
-            int id = Integer.parseInt(br.readLine());
-            
-            System.out.print("Enter new name: ");
-            String name = br.readLine();
-            
-            System.out.print("Enter new city: ");
-            String city = br.readLine();
-            
-            System.out.print("Enter new state: ");
-            String state = br.readLine();
-            
-            System.out.print("Enter new pincode: ");
-            String pincode = br.readLine();
-            
-            String sql = "UPDATE students SET name=?, city=?, state=?, pincode=? WHERE id=?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, name);
-            pstmt.setString(2, city);
-            pstmt.setString(3, state);
-            pstmt.setString(4, pincode);
-            pstmt.setInt(5, id);
-            
-            int rows = pstmt.executeUpdate();
-            if (rows > 0) {
-                System.out.println("Student updated successfully!");
-            } else {
-                System.out.println("Student not found!");
-            }
-            pstmt.close();
-        } catch (Exception e) {
-            System.out.println("Error in update operation: " + e.getMessage());
-        }
-    }
-    
-    private static void deleteStudent() {
-        try {
-            System.out.print("Enter student ID to delete: ");
-            int id = Integer.parseInt(br.readLine());
-            
-            String sql = "DELETE FROM students WHERE id=?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, id);
-            
-            int rows = pstmt.executeUpdate();
-            if (rows > 0) {
-                System.out.println("Student deleted successfully!");
-            } else {
-                System.out.println("Student not found!");
-            }
-            pstmt.close();
-        } catch (Exception e) {
-            System.out.println("Error in delete operation: " + e.getMessage());
-        }
-    }
-    
-    private static void displayAllStudents() {
-        try {
-            String sql = "SELECT * FROM students";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            
-            System.out.println("\nID\tName\t\tCity\t\tState\t\tPincode");
-            System.out.println("------------------------------------------------");
-            
-            while (rs.next()) {
-                System.out.println(rs.getInt("id") + "\t" + 
-                                 rs.getString("name") + "\t\t" + 
-                                 rs.getString("city") + "\t\t" + 
-                                 rs.getString("state") + "\t\t" + 
-                                 rs.getString("pincode"));
-            }
-            
-            rs.close();
-            stmt.close();
-        } catch (Exception e) {
-            System.out.println("Error in display operation: " + e.getMessage());
+            System.out.println("Error: " + e);
         }
     }
 }
