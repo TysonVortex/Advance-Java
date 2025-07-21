@@ -59,33 +59,18 @@ public class CalculatorServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Calculator Result</title>");
-            out.println("<style>");
-            out.println("body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; background-color: #f5f5f5; }");
-            out.println(".result-container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }");
-            out.println("h1 { color: #333; }");
-            out.println(".calculation { font-size: 24px; margin: 20px 0; padding: 20px; background-color: #f0f0f0; border-radius: 5px; }");
-            out.println(".result { font-size: 32px; font-weight: bold; color: #4CAF50; margin: 20px 0; }");
-            out.println(".error { font-size: 24px; font-weight: bold; color: #f44336; margin: 20px 0; }");
-            out.println(".back-btn { display: inline-block; padding: 12px 24px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }");
-            out.println(".back-btn:hover { background-color: #1976D2; }");
-            out.println("</style>");
+            out.println("<title>Result</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<div class='result-container'>");
-            out.println("<h1>Calculator Result</h1>");
+            out.println("<h1>Result</h1>");
             
             if (!errorMessage.isEmpty()) {
-                out.println("<div class='error'>" + errorMessage + "</div>");
+                out.println("<p>" + errorMessage + "</p>");
             } else {
-                out.println("<div class='calculation'>");
-                out.println(num1 + " " + operationSymbol + " " + num2 + " =");
-                out.println("</div>");
-                out.println("<div class='result'>" + result + "</div>");
+                out.println("<p>" + num1 + " " + operationSymbol + " " + num2 + " = " + result + "</p>");
             }
             
-            out.println("<a href='index.html' class='back-btn'>Calculate Again</a>");
-            out.println("</div>");
+            out.println("<a href='index.html'>Calculate Again</a>");
             out.println("</body>");
             out.println("</html>");
             
