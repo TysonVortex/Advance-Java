@@ -1,109 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Basic Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .calculator {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .radio-group {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .radio-option {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        input[type="radio"] {
-            margin: 0;
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .submit-btn:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <title>Calculator</title>
 </head>
 <body>
-    <div class="calculator">
-        <h1>Basic Calculator</h1>
-        <form action="calculator" method="post">
-            <div class="form-group">
-                <label for="num1">First Number:</label>
-                <input type="number" id="num1" name="num1" step="any" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="num2">Second Number:</label>
-                <input type="number" id="num2" name="num2" step="any" required>
-            </div>
-            
-            <div class="form-group">
-                <label>Select Operation:</label>
-                <div class="radio-group">
-                    <div class="radio-option">
-                        <input type="radio" id="add" name="operation" value="add" required>
-                        <label for="add">Addition (+)</label>
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" id="subtract" name="operation" value="subtract" required>
-                        <label for="subtract">Subtraction (-)</label>
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" id="multiply" name="operation" value="multiply" required>
-                        <label for="multiply">Multiplication (×)</label>
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" id="divide" name="operation" value="divide" required>
-                        <label for="divide">Division (÷)</label>
-                    </div>
-                </div>
-            </div>
-            
-            <button type="submit" class="submit-btn">Calculate</button>
-        </form>
-    </div>
+    <h1>Calculator</h1>
+    <form action="calculator" method="post">
+        First Number: <input type="number" name="num1" step="any" required><br><br>
+        
+        Second Number: <input type="number" name="num2" step="any" required><br><br>
+        
+        Operation:<br>
+        <input type="radio" name="operation" value="add" required> Add<br>
+        <input type="radio" name="operation" value="subtract" required> Subtract<br>
+        <input type="radio" name="operation" value="multiply" required> Multiply<br>
+        <input type="radio" name="operation" value="divide" required> Divide<br><br>
+        
+        <input type="submit" value="Calculate">
+    </form>
 </body>
 </html>
