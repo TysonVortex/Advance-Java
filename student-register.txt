@@ -1,0 +1,33 @@
+‎Write a servlet program database connectivity for the following details
+‎
+‎Database name: college 
+‎Table name: student registration 
+‎ fields: student_id(primary key and auto_increment),
+‎student_firstname, student_lastname, gender(radio button),
+‎Date of birth (DD/MM/YYYY),
+‎mobile number,
+‎email id,
+‎password,
+‎select course (drop down),
+‎city,
+‎address
+‎
+‎Submit(button)
+‎
+‎Second(login) form:
+‎
+‎Enter email address 
+‎Password
+‎
+‎Sigh up(redirect to registration form)
+‎
+‎Submit(button)
+‎
+‎Note:
+‎Create session variable of user email address.
+‎Display user login details 
+‎Display form in table structure
+‎Standerd: beginner level 
+‎No CSS code 
+‎Create all necessary servlet,html and XML files
+‎
